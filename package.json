@@ -5,13 +5,29 @@
   "main": "index.js",
   "scripts": {
     "test:filter-list": "vitest filter-list/",
-    "test": "vitest"
+    "test": "vitest",
+    "storybook": "storybook dev -p 4200",
+    "build-storybook": "storybook build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@storybook/addon-essentials": "7.6.10",
+    "@storybook/addon-interactions": "7.6.10",
+    "@storybook/addon-links": "7.6.10",
+    "@storybook/addon-onboarding": "^1.0.11",
+    "@storybook/blocks": "7.6.10",
+    "@storybook/react": "7.6.10",
+    "@storybook/react-vite": "7.6.10",
+    "@storybook/test": "7.6.10",
     "jest": "^29.7.0",
+    "prop-types": "^15.8.1",
+    "react-dom": "^18.3.1",
+    "storybook": "7.6.10",
     "vitest": "^2.0.5"
+  },
+  "dependencies": {
+    "react": "^18.3.1"
   }
 }
