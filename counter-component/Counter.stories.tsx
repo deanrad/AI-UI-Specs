@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Meta, StoryFn } from "@storybook/react";
 import Counter from "./Counter";
 import { after } from "@rxfx/after";
+import { useWhileMounted } from "@rxfx/react";
 
 export default {
   title: "Counter",
@@ -12,13 +13,18 @@ export default {
 const RENDER_DELAY = 1000;
 
 const Template: StoryFn<typeof Counter> = (args: any) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      args.postRender?.();
-    }, RENDER_DELAY);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     args.postRender?.();
+  //   }, RENDER_DELAY);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
+  useWhileMounted(() =>
+    after(RENDER_DELAY, () => {
+      args.postRender?.();
+    })
+  );
 
   return <Counter {...args} />;
 };
