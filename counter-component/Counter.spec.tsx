@@ -4,10 +4,11 @@ import {
   render,
   screen,
   fireEvent,
-  act,
   cleanup,
+  act,
 } from "@testing-library/react";
 import { beforeEach, describe, it, expect, vi } from "vitest";
+
 import Counter from "./Counter";
 
 vi.useFakeTimers();
@@ -31,13 +32,18 @@ describe("Counter Component", () => {
       const display = screen.getByTestId("count-display");
 
       expect(display.textContent).toBe("Count: 0");
+      expect(button.textContent).toBe("Increment ");
 
       fireEvent.click(button);
 
-      // Wait for 1 second
+      // Check loading state
+      expect(button.textContent).toBe("Increment ⏳");
+
+      // Advance fake timers by 1 second
       advanceFakeTime(1000);
 
       expect(display.textContent).toBe("Count: 1");
+      expect(button.textContent).toBe("Increment ");
     });
 
     it("shows a loading indicator", () => {
@@ -45,17 +51,31 @@ describe("Counter Component", () => {
 
       const button = screen.getByTestId("increment-button");
 
-      expect(button.textContent).toBe("Increment");
-
       fireEvent.click(button);
 
       // Check loading state
       expect(button.textContent).toBe("Increment ⏳");
+    });
 
-      // Wait for 1 second
+    it("cancels the increment", () => {
+      render(<Counter />);
+
+      const incrementButton = screen.getByTestId("increment-button");
+      const cancelButton = screen.getByTestId("cancel-button");
+      const display = screen.getByTestId("count-display");
+
+      fireEvent.click(incrementButton);
+
+      // Check loading state
+      expect(incrementButton.textContent).toBe("Increment ⏳");
+
+      fireEvent.click(cancelButton);
+
+      // Advance fake timers by 1 second
       advanceFakeTime(1000);
 
-      expect(button.textContent).toBe("Increment");
+      expect(display.textContent).toBe("Count: 0");
+      expect(incrementButton.textContent).toBe("Increment ");
     });
   });
 });

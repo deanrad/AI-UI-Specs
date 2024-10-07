@@ -34,6 +34,12 @@ SingleClick.args = {
   postRender: doSingleClick,
 };
 
+export const SingleClickWithCancel = Template.bind({});
+SingleClickWithCancel.name = "Single Click with Cancelation";
+SingleClickWithCancel.args = {
+  postRender: doSingleClickThenCancel,
+};
+
 export const DoubleClick = Template.bind({});
 DoubleClick.args = {
   postRender: doDoubleClick,
@@ -46,6 +52,17 @@ function doSingleClick() {
   button?.click();
 }
 
+async function doSingleClickThenCancel() {
+  const button = document.querySelector(
+    '[data-testid="increment-button"]'
+  ) as HTMLButtonElement;
+  const cancelBtn = document.querySelector(
+    '[data-testid="cancel-button"]'
+  ) as HTMLButtonElement;
+  button?.click();
+  await after(100);
+  cancelBtn.click();
+}
 async function doDoubleClick() {
   const button = document.querySelector(
     '[data-testid="increment-button"]'
