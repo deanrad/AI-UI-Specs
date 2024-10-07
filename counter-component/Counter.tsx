@@ -1,24 +1,25 @@
-import React, { useState } from "react";
+import { after, createService, useService } from "@rxfx/react";
+import React from "react";
 
-const Counter = () => {
-  const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isCancelled, setIsCancelled] = useState(false);
+export const countEffect = createService<void, void, void, number>(
+  "count",
+  // TODO - allow for test to vary the speed - mockable function?
+  () => after(1000),
+  ({ isResponse }) =>
+    (count = 0, evt) => {
+      return isResponse(evt) ? count + 1 : count;
+    }
+);
+
+export const Counter = () => {
+  const { isActive: isLoading, state: count } = useService(countEffect);
 
   const handleClick = () => {
-    setIsLoading(true);
-    setIsCancelled(false);
-    setTimeout(() => {
-      if (!isCancelled) {
-        setCount((prevCount) => prevCount + 1);
-      }
-      setIsLoading(false);
-    }, 1000);
+    countEffect();
   };
 
   const handleCancel = () => {
-    setIsCancelled(true);
-    setIsLoading(false);
+    countEffect.cancelCurrent();
   };
 
   return (
