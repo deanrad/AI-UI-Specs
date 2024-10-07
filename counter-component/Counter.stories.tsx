@@ -10,13 +10,10 @@ export default {
 
 const RENDER_DELAY = 1000;
 
-const Template: StoryFn<typeof Counter> = (args) => {
+const Template: StoryFn<typeof Counter> = (args: any) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      const button = document.querySelector('[data-testid="increment-button"]');
-      if (button) {
-        (button as HTMLButtonElement).click();
-      }
+      args.postRender?.();
     }, RENDER_DELAY);
 
     return () => clearTimeout(timer);
@@ -26,4 +23,13 @@ const Template: StoryFn<typeof Counter> = (args) => {
 };
 
 export const SingleClick = Template.bind({});
-SingleClick.args = {};
+SingleClick.args = {
+  postRender: doSingleClick,
+};
+
+function doSingleClick() {
+  const button = document.querySelector(
+    '[data-testid="increment-button"]'
+  ) as HTMLButtonElement;
+  button?.click();
+}
