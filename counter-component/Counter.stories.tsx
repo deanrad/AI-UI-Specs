@@ -1,14 +1,29 @@
 // src/Counter.stories.tsx
-import React from 'react';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import Counter from './Counter';
+import React, { useEffect } from "react";
+import { Meta, StoryFn } from "@storybook/react";
+import Counter from "./Counter";
 
 export default {
-  title: 'Example/Counter',
+  title: "Counter",
   component: Counter,
-} as ComponentMeta<typeof Counter>;
+} as Meta<typeof Counter>;
 
-const Template: ComponentStory<typeof Counter> = (args) => <Counter {...args} />;
+const RENDER_DELAY = 1000;
 
-export const Default = Template.bind({});
-Default.args = {};
+const Template: StoryFn<typeof Counter> = (args) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const button = document.querySelector('[data-testid="increment-button"]');
+      if (button) {
+        (button as HTMLButtonElement).click();
+      }
+    }, RENDER_DELAY);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return <Counter {...args} />;
+};
+
+export const SingleClick = Template.bind({});
+SingleClick.args = {};
