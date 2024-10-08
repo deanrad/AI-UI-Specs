@@ -1,9 +1,11 @@
 // src/Counter.stories.tsx
 import React, { useEffect } from "react";
 import { Meta, StoryFn } from "@storybook/react";
-import { Counter, countEffect } from "./Counter";
 import { after } from "@rxfx/after";
 import { useWhileMounted } from "@rxfx/react";
+import { Counter } from "./Counter";
+import { countService } from "./counter.service";
+import { REQ_TIME } from "./counter.effect";
 
 export default {
   title: "Counter",
@@ -14,7 +16,7 @@ const RENDER_DELAY = 1000;
 
 const Template: StoryFn<typeof Counter> = (args: any) => {
   useWhileMounted(() => {
-    countEffect.reset();
+    countService.reset();
     return after(RENDER_DELAY, () => {
       args.postRender?.();
     });
@@ -22,6 +24,8 @@ const Template: StoryFn<typeof Counter> = (args: any) => {
 
   return <Counter {...args} />;
 };
+
+export const InitialState = Template.bind({});
 
 export const SingleClick = Template.bind({});
 SingleClick.args = {
@@ -54,7 +58,7 @@ async function doSingleClickThenCancel() {
     '[data-testid="cancel-button"]'
   ) as HTMLButtonElement;
   button?.click();
-  await after(100);
+  await after(0.5 * REQ_TIME);
   cancelBtn.click();
 }
 async function doDoubleClick() {

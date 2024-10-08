@@ -7,9 +7,13 @@ import {
   cleanup,
   act,
 } from "@testing-library/react";
+import { after } from "@rxfx/after";
 import { beforeEach, describe, it, expect, vi } from "vitest";
 
 import { Counter } from "./Counter";
+import * as CounterEffect from "./counter.effect";
+const { REQ_TIME } = CounterEffect;
+import { countService } from "./counter.service";
 
 vi.useFakeTimers();
 
@@ -21,6 +25,7 @@ const advanceFakeTime = (ms: number) => {
 
 describe("Counter Component", () => {
   beforeEach(() => {
+    countService.reset();
     cleanup();
   });
 
@@ -40,7 +45,7 @@ describe("Counter Component", () => {
       expect(button.textContent).toBe("Increment ⏳");
 
       // Advance fake timers by 1 second
-      advanceFakeTime(1000);
+      advanceFakeTime(REQ_TIME);
 
       expect(display.textContent).toBe("Count: 1");
 
@@ -60,25 +65,27 @@ describe("Counter Component", () => {
       expect(button.textContent).toBe("Increment ⏳");
     });
 
-    it("cancels the increment", () => {
+    it("cancels the increment", async () => {
       render(<Counter />);
 
       const incrementButton = screen.getByTestId("increment-button");
       const cancelButton = screen.getByTestId("cancel-button");
       const display = screen.getByTestId("count-display");
 
+      expect(display.textContent).toBe("Count: 0");
       fireEvent.click(incrementButton);
 
       // Check loading state
       expect(incrementButton.textContent).toBe("Increment ⏳");
 
+      await advanceFakeTime(0.5 * REQ_TIME);
       fireEvent.click(cancelButton);
 
       // Advance fake timers by 1 second
-      advanceFakeTime(1000);
+      await advanceFakeTime(REQ_TIME);
 
-      // expect(display.textContent).toBe("Count: 0");
-      // expect(incrementButton.textContent).toBe("Increment ");
+      expect(display.textContent).toBe("Count: 0");
+      expect(incrementButton.textContent).toBe("Increment ");
     });
   });
 });
